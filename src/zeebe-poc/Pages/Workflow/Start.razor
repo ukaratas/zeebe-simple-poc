@@ -1,0 +1,18 @@
+@page "/workflow/start"
+
+@inject NavigationManager NavigationManager
+
+<h1>Starting Point</h1>
+
+<p>Starting Point of Workflow</p>
+
+<button class="btn btn-primary" @onclick="NavigateToApply">Let Start</button>
+
+@code {
+
+    private void NavigateToApply()
+    {
+        NavigationManager.NavigateTo("/workflow/apply");
+    }
+
+}

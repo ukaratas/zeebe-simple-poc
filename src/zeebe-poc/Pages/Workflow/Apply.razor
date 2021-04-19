@@ -1,0 +1,48 @@
+@page "/workflow/apply"
+
+<h1>Apply Form </h1>
+
+<p>With this form process will created than form data will submitted to process.</p>
+
+
+<EditForm Model="@applyModel" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label>
+            Full Name:
+            <InputText @bind-Value="applyModel.FullName" />
+        </label>
+    </p>
+    <p>
+        <label>
+            Your Request:
+            <InputSelect @bind-Value="applyModel.Request">
+                <option value="Hug">Hug</option>
+                <option value="Kiss">Kiss</option>
+            </InputSelect>
+        </label>
+    </p>
+    <p>
+        <label>
+            Donation $:
+            <InputNumber @bind-Value="applyModel.Donation" />
+        </label>
+    </p>
+
+    <button type="submit">Submit</button>
+   
+</EditForm>
+
+<button class="btn btn-primary">Apply</button>
+
+@code {
+
+    private ApplyModel applyModel = new ApplyModel() { Donation = 10 } ;
+
+    private void HandleValidSubmit()
+    {
+
+    }
+ }
