@@ -1,0 +1,40 @@
+@page "/applications"
+
+@inject zeebe_poc.Services.IBusinessService _businessService
+
+<h1>Applications</h1>
+
+@if ( _businessService.Applications() == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <tbody>
+            @foreach (var application in _businessService.Applications())
+            {
+                <tr>
+                    <td>@application.EventingConntectionId</td>
+                    <td>@application.IsCompleted</td>
+                    <td>@application.InstanceId</td>
+                    <td>@application.Email</td>
+                    <td>@application.FullName</td>
+                    <td>@application.Request</td>
+                    <td>@application.Donation</td>
+                    <td>@application.State</td>
+                    <td>
+
+                    @foreach (var log in @application.Logs)
+                    {
+                        <li>@log</li>
+                    }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+       

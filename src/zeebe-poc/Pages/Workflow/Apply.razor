@@ -1,4 +1,18 @@
-@page "/workflow/apply"
+@page "/workflow/apply/{Email}"
+
+@using zeebe_poc.Services;
+@using System.Text.Json;
+@using System.Text.Json.Serialization;
+@using Microsoft.Extensions.Logging;
+
+
+@inject IZeebeService _zeebeService
+@inject IBusinessService _businessService
+@inject IClientEventService _clientEventService
+@inject NavigationManager _navigationManager
+
+@inject ILogger<Apply> _logger;
+
 
 <h1>Apply Form </h1>
 
@@ -9,10 +23,18 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <p>
+
+      <p>
         <label>
             Full Name:
             <InputText @bind-Value="applyModel.FullName" />
+        </label>
+    </p>
+
+    <p>
+        <label>
+            EMail:
+            <InputText @bind-Value="applyModel.Email" />
         </label>
     </p>
     <p>
@@ -31,18 +53,47 @@
         </label>
     </p>
 
-    <button type="submit">Submit</button>
+    <button class="btn btn-primary" type="submit">Apply</button>
    
 </EditForm>
 
-<button class="btn btn-primary">Apply</button>
-
 @code {
 
+     [Parameter]
+    public string Email { get; set; }
+
+
     private ApplyModel applyModel = new ApplyModel() { Donation = 10 } ;
+    
+    protected override void OnInitialized()
+    {
+        applyModel.Email = Email;
+
+       _clientEventService.SubcribeMeForClientEvent( (command, state, payload) => 
+       {
+          if (command == "Route")
+          {
+            _navigationManager.NavigateTo(payload["Route"].ToString());
+          }
+       });
+    }
+    
 
     private void HandleValidSubmit()
     {
+        applyModel.InstanceId = Guid.NewGuid().ToString();
+        applyModel.EventingConnectionId = _clientEventService.ConnectionId();
+        
+        string jsonText = JsonSerializer.Serialize(applyModel, new JsonSerializerOptions
+        {
+            Converters =
+            {
+                new JsonStringEnumConverter()
+            }
+        });
 
+        _zeebeService.SendMessage(applyModel.InstanceId, "MessageStart", jsonText);
     }
+
+   
  }

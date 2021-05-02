@@ -1,0 +1,32 @@
+@page "/workflow/result/{InstanceId}"
+
+@using zeebe_poc.Services;
+
+@inject IZeebeService _zeebeService
+@inject IClientEventService _clientEventService
+@inject NavigationManager _navigationManager
+
+<h1>Result</h1>
+
+ <button class="btn btn-primary" @onclick="Complete">Complete</button>
+
+@code {
+    [Parameter]
+    public string InstanceId { get; set; }
+
+    protected override void OnInitialized()
+    {
+       _clientEventService.SubcribeMeForClientEvent( (command, state, payload) => 
+       {
+          if (command == "Route")
+          {
+            _navigationManager.NavigateTo(payload["Route"].ToString());
+          }
+       });
+    }
+
+    private void Complete()
+    {
+          _zeebeService.SendMessage(InstanceId, "MessageComplete", "{}");
+    }
+}

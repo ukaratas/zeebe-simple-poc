@@ -1,0 +1,6 @@
+{
+      "authServer": "...",
+      "clientId": "...",
+      "clientSecret": "...",
+      "zeebeUrl": "..."
+}

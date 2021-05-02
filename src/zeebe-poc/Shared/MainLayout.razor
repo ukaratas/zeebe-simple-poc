@@ -1,5 +1,12 @@
 @inherits LayoutComponentBase
 
+@using Microsoft.Extensions.Logging;
+
+@inject ILogger<Index> _logger;
+@inject NavigationManager _navigationManager
+@inject zeebe_poc.Services.IServerEventService _serverEventService
+@inject zeebe_poc.Services.IClientEventService _clientEventService
+
 <div class="page">
     <div class="sidebar">
         <NavMenu />
@@ -7,7 +14,7 @@
 
     <div class="main">
         <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            <h1>Simple Zeebe process implementation POC </h1>
         </div>
 
         <div class="content px-4">
@@ -15,3 +22,20 @@
         </div>
     </div>
 </div>
+
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await Task.Run(() =>
+            {
+                _clientEventService.Register(_navigationManager.ToAbsoluteUri("/eventhub"));
+                _serverEventService.Register(_navigationManager.ToAbsoluteUri("/eventhub"));
+                _logger.LogInformation("Event hubs are registered:");
+            });
+        }
+    }
+   
+}

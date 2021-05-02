@@ -1,18 +1,42 @@
 @page "/workflow/start"
 
 @inject NavigationManager NavigationManager
+@inject zeebe_poc.Services.IBusinessService _businessService
 
 <h1>Starting Point</h1>
 
-<p>Starting Point of Workflow</p>
+<p>Starting Point of Workflow. We going to check for your existing application</p>
 
-<button class="btn btn-primary" @onclick="NavigateToApply">Let Start</button>
+    <p>
+        <label>
+            Enter your eMail address: 
+            <input @bind="email" />
+        </label>
+    </p>
+  
+    <button class="btn btn-primary" @onclick="CheckAndRoute">Start</button>
 
 @code {
+
+    public string email;
 
     private void NavigateToApply()
     {
         NavigationManager.NavigateTo("/workflow/apply");
+    }
+
+    private void CheckAndRoute()
+    {
+        var application = _businessService.GetActiveApplication(email);
+
+        if (application == null)
+        {
+             NavigationManager.NavigateTo("/workflow/apply/" + email);
+        }
+        else
+        {
+            // implement navigation with application's state
+        }
     }
 
 }
