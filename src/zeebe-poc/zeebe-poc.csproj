@@ -18,6 +18,7 @@
 
    <ItemGroup>
     <None Update="zeebe-config.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="Processes/fsm-poc.bpmn" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 

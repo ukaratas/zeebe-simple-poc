@@ -16,6 +16,7 @@ namespace zeebe_poc.Services
     public interface IZeebeService
     {
         public Task<ITopology> Status();
+        public Task<IDeployResponse> Deploy(string modelFilename);
         public Task<String> SendMessage(string instanceId, string messageName, string payload);
         public void StartWorkers();
 
@@ -32,7 +33,7 @@ namespace zeebe_poc.Services
             _logger = logger;
             _businessService = businessService;
             _serverEventService = eventService;
-        
+
             var authServer = configuration["authServer"];
             var clientId = configuration["clientId"];
             var clientSecret = configuration["clientSecret"];
@@ -62,6 +63,15 @@ namespace zeebe_poc.Services
         public Task<ITopology> Status()
         {
             return _client.TopologyRequest().Send();
+        }
+
+        public async Task<IDeployResponse> Deploy(string modelFilename)
+        {
+            var filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, "Processes", modelFilename);
+            var deployment = await _client.NewDeployCommand().AddResourceFile(filename).Send();
+            var res = deployment.Workflows[0];
+            _logger.LogInformation("Deployed BPMN Model: " + res?.BpmnProcessId + " v." + res?.Version);
+            return deployment;
         }
 
         public async Task<String> SendMessage(string instanceId, string messageName, string payload)

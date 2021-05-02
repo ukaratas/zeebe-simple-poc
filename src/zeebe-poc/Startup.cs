@@ -72,7 +72,7 @@ namespace zeebe_poc
             });
 
             var zeebeService = app.ApplicationServices.GetService<IZeebeService>();
-            //zeebeService.Deploy("sample-process.bpmn");
+            zeebeService.Deploy("fsm-poc.bpmn");
             zeebeService.StartWorkers();
         }
     }
