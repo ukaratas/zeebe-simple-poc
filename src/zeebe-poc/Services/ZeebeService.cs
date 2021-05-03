@@ -117,19 +117,26 @@ namespace zeebe_poc.Services
 
                 var state = customHeaders["State"].ToString();
 
+                ApplicationModel application = null;
+
                 switch (state)
                 {
                     case "Apply":
                         //First Publish
-                        var application = _businessService.NewApplication(variables["Email"].ToString(), variables["InstanceId"].ToString());
-                        application.FullName = variables["FullName"].ToString();
-                        application.EventingConntectionId = variables["EventingConnectionId"].ToString();
-                        application.Request = (RequestType)Enum.Parse(typeof(RequestType), variables["Request"].ToString());
-                        application.Donation = int.Parse(variables["Donation"].ToString());
-                        application.State = state;
+                        application = _businessService.NewApplication(variables["Email"].ToString(), variables["InstanceId"].ToString());
                         break;
                     default:
+                        application = _businessService.GetActiveApplication(variables["Email"].ToString());
                         break;
+                }
+
+                if (application != null)
+                {
+                    application.FullName = variables["FullName"].ToString();
+                    application.EventingConntectionId = variables["EventingConnectionId"].ToString();
+                    application.Request = (RequestType)Enum.Parse(typeof(RequestType), variables["Request"].ToString());
+                    application.Donation = int.Parse(variables["Donation"].ToString());
+                    application.State = state;
                 }
 
                 await client.NewCompleteJobCommand(job.Key)
