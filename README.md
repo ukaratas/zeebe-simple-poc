@@ -7,6 +7,9 @@ Simple POC implementation with Zeebe including below concepts;
 * Loosely coupled custom persistance implemetation.
 * Sampling Headers and Input/Output variables.
 
+## Process
+Process is stored in the **Processes** folder of project. Project is deploying process at startup. You can use **Zeebe Modeller** to modify it and also upload to camunda cloud.
+
 ![](https://i.imgur.com/LrZISUQ.png)
 
 ## How to run 
