@@ -13,19 +13,5 @@ Process is stored in the **Processes** folder of project. Project is deploying p
 ![](https://i.imgur.com/LrZISUQ.png)
 
 ## How to run 
-
-1. Login to Cloud version of Zeebe  [console.cloud.camunda.io] https://console.cloud.camunda.io/)
-2. Follow the [instructions](https://docs.camunda.io/docs/guides/) to create a zeebe cluster.
-3. Note that zeebe client connection credentials.
-4. Create a config file **zeebe-config.json** including zeebe credentials. *Sample config file is exists on root folder of project which named credentials.zeebe-config.json-sample*
-
-```json
-{
-      "authServer": "https://login.cloud.camunda.io/oauth/token",
-      "clientId": "CD********************************zMI",
-      "clientSecret": "1************************************",
-      "zeebeUrl": "f28e******************ca819.zeebe.camunda.io:443"
-}
-```
-
-5. Run the project :)
+1. Setup [Zeebe on Docker](https://github.com/camunda-cloud/camunda-cloud-get-started/blob/master/docker-compose.yaml)
+2. Run the project :)

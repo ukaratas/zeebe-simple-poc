@@ -28,35 +28,16 @@ namespace zeebe_poc.Services
         private readonly IBusinessService _businessService;
         private readonly IServerEventService _serverEventService;
 
-        public ZeebeService(ILogger<ZeebeService> logger, IBusinessService businessService, IServerEventService eventService, IConfiguration configuration)
+        public ZeebeService(ILogger<ZeebeService> logger, IBusinessService businessService, IServerEventService eventService)
         {
             _logger = logger;
             _businessService = businessService;
             _serverEventService = eventService;
 
-            var authServer = configuration["authServer"];
-            var clientId = configuration["clientId"];
-            var clientSecret = configuration["clientSecret"];
-            var zeebeUrl = configuration["zeebeUrl"];
-
-
-            char[] port =
-            {
-                '4', '3', ':'
-            };
-            var audience = zeebeUrl?.TrimEnd(port);
-
             _client =
                 ZeebeClient.Builder()
-                    .UseGatewayAddress(zeebeUrl)
-                    .UseTransportEncryption()
-                    .UseAccessTokenSupplier(
-                        CamundaCloudTokenProvider.Builder()
-                            .UseAuthServer(authServer)
-                            .UseClientId(clientId)
-                            .UseClientSecret(clientSecret)
-                            .UseAudience(audience)
-                            .Build())
+                    .UseGatewayAddress("0.0.0.0:26500")
+                    .UsePlainText()
                     .Build();
         }
 
@@ -69,15 +50,11 @@ namespace zeebe_poc.Services
         {
             var filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory!, "Processes", modelFilename);
             var deployment = await _client.NewDeployCommand().AddResourceFile(filename).Send();
-            var res = deployment.Workflows[0];
-            _logger.LogInformation("Deployed BPMN Model: " + res?.BpmnProcessId + " v." + res?.Version);
             return deployment;
         }
 
         public async Task<String> SendMessage(string instanceId, string messageName, string payload)
         {
-            _logger.LogInformation("SendMessage:", messageName, payload);
-
             var instance = await _client.NewPublishMessageCommand()
                     .MessageName(messageName)
                     .CorrelationKey(instanceId)
